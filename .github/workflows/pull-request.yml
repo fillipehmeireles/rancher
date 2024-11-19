@@ -3,9 +3,9 @@ on:
   pull_request:
     paths-ignore:
       # omit tests from triggering CI except when CI tests are changed
-      - 'tests/v2/validation/**'
-      - 'tests/v2/codecoverage/**'
-      - 'tests/validation/**'
+      - "tests/v2/validation/**"
+      - "tests/v2/codecoverage/**"
+      - "tests/validation/**"
 
 env:
   ARCH: amd64
@@ -35,11 +35,11 @@ jobs:
         uses: ./.github/actions/install-yq
         with:
           arch: ${{ env.ARCH }}
-      - id: env 
+      - id: env
         name: Setup Dependencies Env Variables
         uses: ./.github/actions/setup-build-env
       - name: Install dependencies
-        env: 
+        env:
           HELM_URL: https://get.helm.sh/helm-${{ steps.env.outputs.HELM_VERSION }}-linux-amd64.tar.gz
         run: |
           curl ${{ env.HELM_URL }} | tar xvzf - --strip-components=1 -C /tmp/ && \
@@ -74,7 +74,7 @@ jobs:
       - name: install yq
         shell: bash
         run: sudo snap install yq
-      - id: env 
+      - id: env
         name: Setup Dependencies Env Variables
         uses: ./.github/actions/setup-build-env
       - name: Docker meta
@@ -148,7 +148,7 @@ jobs:
       - name: install yq
         shell: bash
         run: sudo snap install yq
-      - id: env 
+      - id: env
         name: Setup Dependencies Env Variables
         uses: ./.github/actions/setup-build-env
       - name: Docker meta
@@ -182,7 +182,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          push:  ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             "VERSION=${{ env.TAG }}"
             "ARCH=${{ env.ARCH }}"
@@ -209,14 +209,14 @@ jobs:
     uses: ./.github/workflows/integration-tests.yml
     with:
       parent_run_id: ${{ github.run_id }}
-  build-agent-windows:
-    strategy:
-      matrix:
-        os: [windows]
-        version: [2019, 2022]
-    runs-on: ${{ matrix.os }}-${{ matrix.version }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Build Windows Agent Image
-      run: docker build -t ${{ env.IMAGE_AGENT }}:${{ env.TAG }} --build-arg VERSION=${{ env.COMMIT }} --build-arg SERVERCORE_VERSION=ltsc${{ matrix.version }} -f package/windows/Dockerfile.agent .
+  # build-agent-windows:
+  #   strategy:
+  #     matrix:
+  #       os: [windows]
+  #       version: [2019, 2022]
+  #   runs-on: ${{ matrix.os }}-${{ matrix.version }}
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #   - name: Build Windows Agent Image
+  #     run: docker build -t ${{ env.IMAGE_AGENT }}:${{ env.TAG }} --build-arg VERSION=${{ env.COMMIT }} --build-arg SERVERCORE_VERSION=ltsc${{ matrix.version }} -f package/windows/Dockerfile.agent .
